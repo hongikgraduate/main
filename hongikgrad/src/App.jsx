@@ -7,7 +7,7 @@ import { REQ_BUSINESS, BUSINESS_MAJOR_IDS } from "./majors/business"
 import { REQ_VD, VD_MAJOR_IDS } from "./majors/visualDesign"
 import "./App.css"
 
-const STEPS = ["클래스넷", "전체성적조회", "Ctrl+A", "복사", "아래에 붙여넣기", "졸업요건확인 버튼"]
+const STEPS = ["클래스넷", "전체성적조회", "Ctrl(command)+A", "복사", "아래에 붙여넣기", "졸업요건확인 버튼"]
 
 const MAJOR_CONFIG = {
   cs:       { req: REQ_CS,       majorIds: CS_MAJOR_IDS },
