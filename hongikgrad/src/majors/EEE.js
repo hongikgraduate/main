@@ -22,6 +22,7 @@ export const CREDITS = {
 };
 
 export const MAJOR_IDS = new Set([
+  "106202", // 디지털논리회로
   "106303", // 전자기학
   "106405", // 확률변수론
   "106302", // 물리전자
