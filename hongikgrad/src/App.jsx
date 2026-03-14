@@ -42,7 +42,9 @@ function InputPage({ onSubmit }) {
     const { REQ: majorReq, MAJOR_IDS: majorIds, CREDITS: creditMap, MSC: mscTrack } = MAJORS[major]
     const totalCredits = parseTotalCredits(text)
     const { majorCredits } = calcCredits(takenSet, majorIds, creditMap)
-    const reqList = [REQ_GYOYANG_PIL, REQ_DRAGONBALL, majorReq]
+    const reqList = [REQ_GYOYANG_PIL, REQ_DRAGONBALL]
+    if (Array.isArray(majorReq)) reqList.push(...majorReq)
+    else reqList.push(majorReq)
     const mscReq = mscTrack ? MSC_REQS[mscTrack] : null
     if (mscReq) Array.isArray(mscReq) ? reqList.push(...mscReq) : reqList.push(mscReq)
     const results = checkRequirements(takenSet, reqList)
@@ -82,6 +84,7 @@ function InputPage({ onSubmit }) {
               <option value="computerScience">컴퓨터공학과</option>
               <option value="visualDesign">시각디자인학과</option>
               <option value="business">경영학부</option>
+              <option value="EEE">전자·전기공학부</option>
             </select>
           </div>
           <textarea
