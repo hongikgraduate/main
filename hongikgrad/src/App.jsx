@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { parseCourses, parseTotalCredits } from "./parser"
 import { filterCourses, calcCredits } from "./creditSum"
 import { REQ_GYOYANG_PIL, REQ_DRAGONBALL, checkRequirements } from "./requirements"
@@ -37,16 +37,20 @@ function InputPage({ onSubmit }) {
       setError("과목을 찾을 수 없습니다. 전체성적조회 화면을 복사했는지 확인해 주세요.")
       return
     }
+
     setError("")
     const takenSet = new Set(ids)
     const { REQ: majorReq, MAJOR_IDS: majorIds, CREDITS: creditMap, MSC: mscTrack } = MAJORS[major]
     const totalCredits = parseTotalCredits(text)
     const { majorCredits } = calcCredits(takenSet, majorIds, creditMap)
+
     const reqList = [REQ_GYOYANG_PIL, REQ_DRAGONBALL]
     if (Array.isArray(majorReq)) reqList.push(...majorReq)
     else reqList.push(majorReq)
+
     const mscReq = mscTrack ? MSC_REQS[mscTrack] : null
     if (mscReq) Array.isArray(mscReq) ? reqList.push(...mscReq) : reqList.push(mscReq)
+
     const results = checkRequirements(takenSet, reqList)
     onSubmit({ results, totalCredits, majorCredits })
   }
@@ -79,7 +83,14 @@ function InputPage({ onSubmit }) {
         <div className="textbox-wrapper">
           <div className="textbox-label">
             <span>전체성적 붙여넣기</span>
-            <select className="major-select" value={major} onChange={(e) => { setMajor(e.target.value); setError("") }}>
+            <select
+              className="major-select"
+              value={major}
+              onChange={(e) => {
+                setMajor(e.target.value)
+                setError("")
+              }}
+            >
               <option value="" disabled>전공</option>
               <option value="computerScience">컴퓨터공학과</option>
               <option value="visualDesign">시각디자인학과</option>
@@ -89,7 +100,10 @@ function InputPage({ onSubmit }) {
           </div>
           <textarea
             value={text}
-            onChange={(e) => { setText(e.target.value); setError("") }}
+            onChange={(e) => {
+              setText(e.target.value)
+              setError("")
+            }}
             placeholder="클래스넷에서 복사한 전체성적 내용을 여기에 붙여넣으세요."
           />
         </div>
@@ -118,7 +132,6 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
       </header>
 
       <main className="main">
-        {/* 요약 배너 */}
         <div className={`summary-banner ${allMet ? "all-met" : "partial"}`}>
           <div className="summary-icon">{allMet ? "🎓" : "📋"}</div>
           <div>
@@ -128,7 +141,6 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
           </div>
         </div>
 
-        {/* 학점 요약 */}
         <div className="credit-card">
           <div className="credit-row">
             <span className="credit-label">총 학점</span>
@@ -153,24 +165,29 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
           </div>
         </div>
 
-        {/* 카테고리별 결과 — results 배열 순서 유지 */}
         {(() => {
           const eachGroups = {}
           const order = []
           const seen = new Set()
+
           for (const r of results) {
             if (r.type === "each") {
               (eachGroups[r.category] ??= []).push(r)
-              if (!seen.has(r.category)) { seen.add(r.category); order.push(r) }
+              if (!seen.has(r.category)) {
+                seen.add(r.category)
+                order.push(r)
+              }
             } else {
               order.push(r)
             }
           }
+
           return order.map((r) => {
             if (r.type === "each") return <EachCard key={r.category} category={r.category} items={eachGroups[r.category]} />
             if (r.type === "nOf") return <NOfCard key={r.category} result={r} />
             if (r.type === "creditSection") return <CreditSectionCard key={r.category} result={r} />
             if (r.type === "mscCombined") return <MSCCombinedCard key={r.category} result={r} />
+            return null
           })
         })()}
       </main>
@@ -178,7 +195,6 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
   )
 }
 
-// "each" 타입 — 카테고리 단위 카드
 function EachCard({ category, items }) {
   const catMet = items.filter((r) => r.met).length
   return (
@@ -203,7 +219,6 @@ function EachCard({ category, items }) {
   )
 }
 
-// "creditSection" 타입 — MSC 분야별 학점 합산
 function CreditSectionCard({ result }) {
   return (
     <div className="credit-card">
@@ -229,7 +244,6 @@ function CreditSectionCard({ result }) {
   )
 }
 
-// "mscCombined" 타입 — 학점 섹션 + 개별 이수 항목 하나의 카드
 function MSCCombinedCard({ result }) {
   return (
     <div className="req-card">
@@ -263,7 +277,6 @@ function MSCCombinedCard({ result }) {
   )
 }
 
-// "nOf" 타입 — 7개 중 N개 영역 이수
 function NOfCard({ result }) {
   return (
     <div className="req-card">
@@ -293,13 +306,31 @@ function NOfCard({ result }) {
 export default function App() {
   const [data, setData] = useState(null)
 
+  useEffect(() => {
+    const handlePopState = () => {
+      setData(null)
+    }
+
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [])
+
+  function handleSubmit(resultData) {
+    window.history.pushState({ page: "result" }, "")
+    setData(resultData)
+  }
+
+  function handleBack() {
+    window.history.back()
+  }
+
   return (
     <>
       {data
-        ? <ResultPage results={data.results} totalCredits={data.totalCredits} majorCredits={data.majorCredits} onBack={() => setData(null)} />
-        : <InputPage onSubmit={setData} />
+        ? <ResultPage results={data.results} totalCredits={data.totalCredits} majorCredits={data.majorCredits} onBack={handleBack} />
+        : <InputPage onSubmit={handleSubmit} />
       }
-      <footer style={{ textAlign: 'center', padding: '16px', fontSize: '13px', color: '#888', marginTop: '32px' }}>
+      <footer style={{ textAlign: "center", padding: "16px", fontSize: "13px", color: "#888", marginTop: "32px" }}>
         Copyright 2026. 김형준 &amp; 김범수 All rights reserved.
       </footer>
     </>
