@@ -2,7 +2,7 @@
 
 export const REQ = [
   {
-    category: "전공 기초",  // 최대 8학점인가 그렇대
+    category: "전공 기초",  // 최대 8학점인가 그렇대. 여기에 전기영도 있는데 따로 뺄까?
     type: "each",
     items: [
       { label: "기초평면(1)", ids: ["400101"] },
