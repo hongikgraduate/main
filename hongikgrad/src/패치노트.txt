@@ -24,9 +24,6 @@ major/ 에 architecture.js 만 작성하면 완성
 실제 서비스 운영
 1. 광고 BM 붙이기 -애드픽?
 2. 홍보 계획
-<<<<<<< HEAD
-3. cloudflare WEB ANALYTICS 유저수 측정 -> 가능하면 홈페이지에 접속자수 표시
-=======
 3. cloudflare WEB ANALYTICS 유저수 측정 -> 가능하면 홈페이지에 접속자수 표시
 
 03.14
@@ -38,4 +35,7 @@ major/ 에 architecture.js 만 작성하면 완성
 2. 오늘(일일) 방문자수 보여줄지
 3. 중복 방문 허용할지
 4. 한 사람이 새로고침 여러번 하면 여러번 셀지
->>>>>>> dev
+
+
+03.15
+결과페이지 UI 수정
