@@ -242,13 +242,15 @@ textarea::placeholder {
 }
 
 .summary-banner.partial {
-  background: linear-gradient(135deg, #0013de, #1a3adb);
-  color: #fff;
+  background: linear-gradient(135deg, #ffffff);
+  color: #ff0000;
+  border: 2px solid #ff0000;
 }
 
 .summary-icon {
-  font-size: 40px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .summary-title {
@@ -321,8 +323,8 @@ textarea::placeholder {
 }
 
 .credit-badge.unmet {
-  background: #fff3cd;
-  color: #856404;
+  background: #fce4ec;
+  color: #880e4f;
 }
 
 /* 카테고리 카드 */
@@ -338,7 +340,7 @@ textarea::placeholder {
   padding: 14px 20px;
   font-size: 14px;
   font-weight: 700;
-  color: #0013de;
+  color: #000000;
   border-bottom: 1px solid #e8eaf6;
   display: flex;
   justify-content: space-between;
@@ -347,16 +349,16 @@ textarea::placeholder {
 
 .cat-badge {
   font-size: 13px;
-  background: #fff3cd;
-  color: #856404;
+  background: #e3f2fd;
+  color: #1565c0;
   padding: 3px 12px;
   border-radius: 20px;
   font-weight: 700;
 }
 
 .cat-badge.all-met {
-  background: #d4edda;
-  color: #155724;
+  background: #e3f2fd;
+  color: #1565c0;
 }
 
 /* 요건 행 */
@@ -372,30 +374,43 @@ textarea::placeholder {
   border-bottom: none;
 }
 
-.req-row.unmet {
-  opacity: 0.6;
+.req-row.met .req-name {
+  color: #b5b4b4;
+}
+
+.req-row.met .req-icon {
+  color: #b5b4b4;
+}
+
+.req-row.met .met-chip {
+  background: #e9f6ee;
+  color: #6b9b74;
+
+}
+
+.req-row.met .cat-badge {
+  background: #eceff1;
+  color: #90a4ae;
 }
 
 .req-icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .req-row.met .req-icon {
-  background: #d4edda;
-  color: #155724;
+  color: #9e9e9e;
 }
 
 .req-row.unmet .req-icon {
-  background: #f8d7da;
-  color: #721c24;
+  color: #ff3b30;
 }
 
 .req-name {
@@ -414,8 +429,8 @@ textarea::placeholder {
 }
 
 .met-chip {
-  background: #e3f2fd;
-  color: #1565c0;
+  background: #d4edda;
+  color: #155724;
 }
 
 .unmet-chip {

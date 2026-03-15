@@ -4,6 +4,7 @@ import { filterCourses, calcCredits } from "./creditSum"
 import { REQ_GYOYANG_PIL, REQ_DRAGONBALL, checkRequirements } from "./requirements"
 import { MSC_REQS } from "./msc"
 import "./App.css"
+import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react"
 
 const majorModules = import.meta.glob("./majors/*.js", { eager: true })
 const MAJORS = Object.fromEntries(
@@ -133,7 +134,9 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
 
       <main className="main">
         <div className={`summary-banner ${allMet ? "all-met" : "partial"}`}>
-          <div className="summary-icon">{allMet ? "🎓" : "📋"}</div>
+          <div className="summary-icon">
+            {allMet ? "🎓" : <AlertTriangle size={18} color="#ff5a52" strokeWidth={2} />}
+          </div>
           <div>
             <div className="summary-title">
               {allMet ? "모든 필수 요건을 충족했습니다!" : "아직 충족하지 않은 요건이 있습니다"}
@@ -207,7 +210,13 @@ function EachCard({ category, items }) {
       </div>
       {items.map((item) => (
         <div key={item.label} className={`req-row ${item.met ? "met" : "unmet"}`}>
-          <span className="req-icon">{item.met ? "✓" : "✗"}</span>
+          <span className="req-icon">
+            {item.met ? (
+              <CheckCircle2 size={18} strokeWidth={2} />
+            ) : (
+              <XCircle size={18} strokeWidth={2} />
+            )}
+          </span>
           <span className="req-name">{item.label}</span>
           {item.met
             ? <span className="req-chip met-chip">{item.showName ? `${item.matchedName} ` : ""}이수완료</span>
@@ -268,7 +277,13 @@ function MSCCombinedCard({ result }) {
       <div className="credit-divider" />
       {result.eachItems.map((item) => (
         <div key={item.label} className={`req-row ${item.met ? "met" : "unmet"}`}>
-          <span className="req-icon">{item.met ? "✓" : "✗"}</span>
+          <span className="req-icon">
+            {item.met ? (
+              <CheckCircle2 size={18} strokeWidth={2} />
+            ) : (
+              <XCircle size={18} strokeWidth={2} />
+            )}
+          </span>
           <span className="req-name">{item.label}</span>
           <span className={`req-chip ${item.met ? "met-chip" : "unmet-chip"}`}>{item.met ? "이수완료" : "미이수"}</span>
         </div>
@@ -288,7 +303,13 @@ function NOfCard({ result }) {
       </div>
       {result.areas.map((area) => (
         <div key={area.label} className={`req-row ${area.met ? "met" : "unmet"}`}>
-          <span className="req-icon">{area.met ? "✓" : "✗"}</span>
+          <span className="req-icon">
+            {area.met ? (
+              <CheckCircle2 size={18} strokeWidth={2} />
+            ) : (
+              <XCircle size={18} strokeWidth={2} />
+            )}
+          </span>
           <span className="req-name">{area.label}</span>
           {area.met
             ? <span className="req-chip met-chip">{area.matchedName} 이수완료</span>
