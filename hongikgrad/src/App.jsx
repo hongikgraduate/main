@@ -3,7 +3,7 @@ import { parseCourses, parseTotalCredits } from "./parser"
 import { filterCourses, calcCredits } from "./creditSum"
 import { REQ_GYOYANG_PIL, REQ_DRAGONBALL, checkRequirements } from "./requirements"
 import { MSC_REQS } from "./msc"
-import KakaoAd from "./KakaoAd"
+import KakaoAd from "./kakaoAd"
 import "./App.css"
 
 const majorModules = import.meta.glob("./majors/*.js", { eager: true })
