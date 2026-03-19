@@ -3,8 +3,8 @@ import { parseCourses, parseTotalCredits } from "./parser"
 import { filterCourses, calcCredits } from "./creditSum"
 import { REQ_GYOYANG_PIL, REQ_DRAGONBALL, checkRequirements } from "./requirements"
 import { MSC_REQS } from "./msc"
+import KakaoAd from "./KakaoAd"
 import "./App.css"
-import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react"
 
 const majorModules = import.meta.glob("./majors/*.js", { eager: true })
 const MAJORS = Object.fromEntries(
@@ -33,6 +33,7 @@ function InputPage({ onSubmit }) {
       setError("성적 내용을 붙여넣어 주세요.")
       return
     }
+
     const ids = filterCourses(parseCourses(text))
     if (ids.length === 0) {
       setError("과목을 찾을 수 없습니다. 전체성적조회 화면을 복사했는지 확인해 주세요.")
@@ -69,6 +70,7 @@ function InputPage({ onSubmit }) {
             <br />
             홍익대학교 학생들이 졸업을 위해 필요한 수업들을 한번에 확인할 수 있도록 제작된 웹사이트입니다.
           </p>
+
           <div className="steps">
             <span className="steps-label">사용방법</span>
             {STEPS.map((step, i) => (
@@ -78,7 +80,10 @@ function InputPage({ onSubmit }) {
               </span>
             ))}
           </div>
-          <p className="info-note">* 수강한 강의 외의 개인정보는 절대 저장하거나 처리하지 않습니다</p>
+
+          <p className="info-note">
+            * 수강한 강의 외의 개인정보는 절대 저장하거나 처리하지 않습니다
+          </p>
         </div>
 
         <div className="textbox-wrapper">
@@ -99,6 +104,7 @@ function InputPage({ onSubmit }) {
               <option value="EEE">전자·전기공학부</option>
             </select>
           </div>
+
           <textarea
             value={text}
             onChange={(e) => {
@@ -132,67 +138,85 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
         <h1>졸업요건 결과</h1>
       </header>
 
-      <main className="main">
-        <div className={`summary-banner ${allMet ? "all-met" : "partial"}`}>
-          <div className="summary-icon">
-            {allMet ? "🎓" : <AlertTriangle size={18} color="#ff5a52" strokeWidth={2} />}
-          </div>
-          <div>
-            <div className="summary-title">
-              {allMet ? "모든 필수 요건을 충족했습니다!" : "아직 충족하지 않은 요건이 있습니다"}
+      <main className="main result-layout">
+        <aside className="side-ad left-ad">
+          <KakaoAd
+            unit="DAN-bDF9Z3hSDq4ysUwF"
+            width="160"
+            height="600"
+          />
+        </aside>
+
+        <section className="result-content">
+          <div className={`summary-banner ${allMet ? "all-met" : "partial"}`}>
+            <div className="summary-icon">{allMet ? "🎓" : "📋"}</div>
+            <div>
+              <div className="summary-title">
+                {allMet ? "모든 필수 요건을 충족했습니다!" : "아직 충족하지 않은 요건이 있습니다"}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="credit-card">
-          <div className="credit-row">
-            <span className="credit-label">총 학점</span>
-            <span className="credit-value">
-              <span className={`credit-num ${totalCredits >= 132 ? "met" : "unmet"}`}>{totalCredits}</span>
-              <span className="credit-denom"> / 132</span>
-            </span>
-            <span className={`credit-badge ${totalCredits >= 132 ? "met" : "unmet"}`}>
-              {totalCredits >= 132 ? "충족" : `${132 - totalCredits}학점 부족`}
-            </span>
+          <div className="credit-card">
+            <div className="credit-row">
+              <span className="credit-label">총 학점</span>
+              <span className="credit-value">
+                <span className={`credit-num ${totalCredits >= 132 ? "met" : "unmet"}`}>{totalCredits}</span>
+                <span className="credit-denom"> / 132</span>
+              </span>
+              <span className={`credit-badge ${totalCredits >= 132 ? "met" : "unmet"}`}>
+                {totalCredits >= 132 ? "충족" : `${132 - totalCredits}학점 부족`}
+              </span>
+            </div>
+            <div className="credit-divider" />
+            <div className="credit-row">
+              <span className="credit-label">전공 학점</span>
+              <span className="credit-value">
+                <span className={`credit-num ${majorCredits >= 50 ? "met" : "unmet"}`}>{majorCredits}</span>
+                <span className="credit-denom"> / 50</span>
+              </span>
+              <span className={`credit-badge ${majorCredits >= 50 ? "met" : "unmet"}`}>
+                {majorCredits >= 50 ? "충족" : `${50 - majorCredits}학점 부족`}
+              </span>
+            </div>
           </div>
-          <div className="credit-divider" />
-          <div className="credit-row">
-            <span className="credit-label">전공 학점</span>
-            <span className="credit-value">
-              <span className={`credit-num ${majorCredits >= 50 ? "met" : "unmet"}`}>{majorCredits}</span>
-              <span className="credit-denom"> / 50</span>
-            </span>
-            <span className={`credit-badge ${majorCredits >= 50 ? "met" : "unmet"}`}>
-              {majorCredits >= 50 ? "충족" : `${50 - majorCredits}학점 부족`}
-            </span>
-          </div>
-        </div>
 
-        {(() => {
-          const eachGroups = {}
-          const order = []
-          const seen = new Set()
+          {(() => {
+            const eachGroups = {}
+            const order = []
+            const seen = new Set()
 
-          for (const r of results) {
-            if (r.type === "each") {
-              (eachGroups[r.category] ??= []).push(r)
-              if (!seen.has(r.category)) {
-                seen.add(r.category)
+            for (const r of results) {
+              if (r.type === "each") {
+                ;(eachGroups[r.category] ??= []).push(r)
+                if (!seen.has(r.category)) {
+                  seen.add(r.category)
+                  order.push(r)
+                }
+              } else {
                 order.push(r)
               }
-            } else {
-              order.push(r)
             }
-          }
 
-          return order.map((r) => {
-            if (r.type === "each") return <EachCard key={r.category} category={r.category} items={eachGroups[r.category]} />
-            if (r.type === "nOf") return <NOfCard key={r.category} result={r} />
-            if (r.type === "creditSection") return <CreditSectionCard key={r.category} result={r} />
-            if (r.type === "mscCombined") return <MSCCombinedCard key={r.category} result={r} />
-            return null
-          })
-        })()}
+            return order.map((r) => {
+              if (r.type === "each") {
+                return <EachCard key={r.category} category={r.category} items={eachGroups[r.category]} />
+              }
+              if (r.type === "nOf") return <NOfCard key={r.category} result={r} />
+              if (r.type === "creditSection") return <CreditSectionCard key={r.category} result={r} />
+              if (r.type === "mscCombined") return <MSCCombinedCard key={r.category} result={r} />
+              return null
+            })
+          })()}
+        </section>
+
+        <aside className="side-ad right-ad">
+          <KakaoAd
+            unit="DAN-bDF9Z3hSDq4ysUwF"
+            width="160"
+            height="600"
+          />
+        </aside>
       </main>
     </>
   )
@@ -200,6 +224,7 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
 
 function EachCard({ category, items }) {
   const catMet = items.filter((r) => r.met).length
+
   return (
     <div className="req-card">
       <div className="req-card-header">
@@ -208,20 +233,19 @@ function EachCard({ category, items }) {
           {catMet} / {items.length}
         </span>
       </div>
+
       {items.map((item) => (
         <div key={item.label} className={`req-row ${item.met ? "met" : "unmet"}`}>
-          <span className="req-icon">
-            {item.met ? (
-              <CheckCircle2 size={18} strokeWidth={2} />
-            ) : (
-              <XCircle size={18} strokeWidth={2} />
-            )}
-          </span>
+          <span className="req-icon">{item.met ? "✓" : "✗"}</span>
           <span className="req-name">{item.label}</span>
-          {item.met
-            ? <span className="req-chip met-chip">{item.showName ? `${item.matchedName} ` : ""}이수완료</span>
-            : <span className="req-chip unmet-chip">미이수</span>
-          }
+          {item.met ? (
+            <span className="req-chip met-chip">
+              {item.showName ? `${item.matchedName} ` : ""}
+              이수완료
+            </span>
+          ) : (
+            <span className="req-chip unmet-chip">미이수</span>
+          )}
         </div>
       ))}
     </div>
@@ -234,13 +258,16 @@ function CreditSectionCard({ result }) {
       <div className="req-card-header" style={{ padding: "0 0 8px 0" }}>
         <span>{result.category}</span>
       </div>
+
       {result.sections.map((section, i) => (
         <div key={section.label}>
           {i > 0 && <div className="credit-divider" />}
           <div className="credit-row">
             <span className="credit-label">{section.label}</span>
             <span className="credit-value">
-              <span className={`credit-num ${section.met ? "met" : "unmet"}`}>{section.earned}</span>
+              <span className={`credit-num ${section.met ? "met" : "unmet"}`}>
+                {section.earned}
+              </span>
               <span className="credit-denom"> / {section.required}</span>
             </span>
             <span className={`credit-badge ${section.met ? "met" : "unmet"}`}>
@@ -259,13 +286,16 @@ function MSCCombinedCard({ result }) {
       <div className="req-card-header">
         <span>{result.category}</span>
       </div>
+
       {result.sections.map((section, i) => (
         <div key={section.label}>
           {i > 0 && <div className="credit-divider" />}
           <div className="credit-row">
             <span className="credit-label">{section.label}</span>
             <span className="credit-value">
-              <span className={`credit-num ${section.met ? "met" : "unmet"}`}>{section.earned}</span>
+              <span className={`credit-num ${section.met ? "met" : "unmet"}`}>
+                {section.earned}
+              </span>
               <span className="credit-denom"> / {section.required}</span>
             </span>
             <span className={`credit-badge ${section.met ? "met" : "unmet"}`}>
@@ -274,18 +304,16 @@ function MSCCombinedCard({ result }) {
           </div>
         </div>
       ))}
+
       <div className="credit-divider" />
+
       {result.eachItems.map((item) => (
         <div key={item.label} className={`req-row ${item.met ? "met" : "unmet"}`}>
-          <span className="req-icon">
-            {item.met ? (
-              <CheckCircle2 size={18} strokeWidth={2} />
-            ) : (
-              <XCircle size={18} strokeWidth={2} />
-            )}
-          </span>
+          <span className="req-icon">{item.met ? "✓" : "✗"}</span>
           <span className="req-name">{item.label}</span>
-          <span className={`req-chip ${item.met ? "met-chip" : "unmet-chip"}`}>{item.met ? "이수완료" : "미이수"}</span>
+          <span className={`req-chip ${item.met ? "met-chip" : "unmet-chip"}`}>
+            {item.met ? "이수완료" : "미이수"}
+          </span>
         </div>
       ))}
     </div>
@@ -301,20 +329,16 @@ function NOfCard({ result }) {
           {result.metCount} / {result.total} 영역 ({result.required}개 이상)
         </span>
       </div>
+
       {result.areas.map((area) => (
         <div key={area.label} className={`req-row ${area.met ? "met" : "unmet"}`}>
-          <span className="req-icon">
-            {area.met ? (
-              <CheckCircle2 size={18} strokeWidth={2} />
-            ) : (
-              <XCircle size={18} strokeWidth={2} />
-            )}
-          </span>
+          <span className="req-icon">{area.met ? "✓" : "✗"}</span>
           <span className="req-name">{area.label}</span>
-          {area.met
-            ? <span className="req-chip met-chip">{area.matchedName} 이수완료</span>
-            : <span className="req-chip unmet-chip">미이수</span>
-          }
+          {area.met ? (
+            <span className="req-chip met-chip">{area.matchedName} 이수완료</span>
+          ) : (
+            <span className="req-chip unmet-chip">미이수</span>
+          )}
         </div>
       ))}
     </div>
@@ -347,11 +371,36 @@ export default function App() {
 
   return (
     <>
-      {data
-        ? <ResultPage results={data.results} totalCredits={data.totalCredits} majorCredits={data.majorCredits} onBack={handleBack} />
-        : <InputPage onSubmit={handleSubmit} />
-      }
-      <footer style={{ textAlign: "center", padding: "16px", fontSize: "13px", color: "#888", marginTop: "32px" }}>
+      {data ? (
+        <ResultPage
+          results={data.results}
+          totalCredits={data.totalCredits}
+          majorCredits={data.majorCredits}
+          onBack={handleBack}
+        />
+      ) : (
+        <InputPage onSubmit={handleSubmit} />
+      )}
+
+      {data && (
+        <div className="bottom-ad">
+          <KakaoAd
+            unit="DAN-t7NIlBeZk6DYCUgC"
+            width="728"
+            height="90"
+          />
+        </div>
+      )}
+
+      <footer
+        style={{
+          textAlign: "center",
+          padding: "16px",
+          fontSize: "13px",
+          color: "#888",
+          marginTop: "32px",
+        }}
+      >
         Copyright 2026. 김형준 &amp; 김범수 All rights reserved.
       </footer>
     </>
