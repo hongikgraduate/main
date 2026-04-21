@@ -102,7 +102,7 @@ function InputPage({ onSubmit }) {
               <option value="visualDesign">시각디자인학과</option>
               <option value="business">경영학부</option>
               <option value="EEE">전자·전기공학부</option>
-              <option value="painting">회화과</option>
+              <option value="FineArts">회화과</option>
             </select>
           </div>
 
