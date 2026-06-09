@@ -98,10 +98,13 @@ function InputPage({ onSubmit }) {
               }}
             >
               <option value="" disabled>전공</option>
+              <option value="CivilandEnvironmentalEngineering">건설환경공학과</option>
+              <option value="EEE">전자·전기공학부</option>
+              <option value="MaterialsScienceandEngineering">신소재공학전공</option>
+              <option value="Chemical Engineering">화학공학전공</option>
               <option value="computerScience">컴퓨터공학과</option>
               <option value="visualDesign">시각디자인학과</option>
               <option value="business">경영학부</option>
-              <option value="EEE">전자·전기공학부</option>
               <option value="FineArts">회화과</option>
               <option value="architecture">건축학전공</option>
             </select>
