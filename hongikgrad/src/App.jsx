@@ -103,6 +103,8 @@ function InputPage({ onSubmit }) {
               <option value="MaterialsScienceandEngineering">신소재공학전공</option>
               <option value="Chemical Engineering">화학공학전공</option>
               <option value="computerScience">컴퓨터공학과</option>
+              <option value="Industrial andDataEngineering">산업·데이터공학과</option>
+              <option value="MechanicalandSystemDesignEngineering">기계·시스템디자인공학과</option>
               <option value="visualDesign">시각디자인학과</option>
               <option value="business">경영학부</option>
               <option value="FineArts">회화과</option>
