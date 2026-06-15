@@ -14,33 +14,62 @@ const MAJORS = Object.fromEntries(
   ])
 )
 
+const COLLEGES = {
+  융합전공: [],
+  공과대학: [
+    ["CivilandEnvironmentalEngineering", "건설환경공학과"],
+    ["EEE", "전자·전기공학부"],
+    ["MaterialsScienceandEngineering", "신소재공학전공"],
+    ["Chemical Engineering", "화학공학전공"],
+    ["computerScience", "컴퓨터공학과"],
+    ["Industrial andDataEngineering", "산업·데이터공학과"],
+    ["MechanicalandSystemDesignEngineering", "기계·시스템디자인공학과"],
+  ],
+  건축도시대학: [
+    ["architecture", "건축학전공"]
+
+  ],
+  경영대학: [["business", "경영학부"]],
+  디자인·예술경영학부: [],
+  문과대학: [],
+  법과대학: [],
+  경제학부: [],
+  사범대학: [],
+    미술대학: [
+    ["visualDesign", "시각디자인학과"],
+    ["FineArts", "회화과"],
+  ],
+  공연예술학부: [],
+  AID융합과학기술대학: [],
+  상경대학: [],
+  광고홍보학부: [],
+  스포츠지도학과: [],
+  조형대학: [],
+  게임학부: [],
+}
+
 const STEPS = ["클래스넷", "전체성적조회", "Ctrl+A", "복사", "아래에 붙여넣기", "졸업요건확인 버튼"]
 
-/* ────────────────────────────────────────────
-   입력 페이지
-──────────────────────────────────────────── */
 function InputPage({ onSubmit }) {
   const [text, setText] = useState("")
+  const [college, setCollege] = useState("")
   const [major, setMajor] = useState("")
   const [error, setError] = useState("")
 
   function handleCheck() {
-    if (!major) {
-      setError("전공을 선택해 주세요.")
-      return
-    }
-    if (!text.trim()) {
-      setError("성적 내용을 붙여넣어 주세요.")
-      return
-    }
+    if (!college) return setError("단과대를 선택해 주세요.")
+    if (!major) return setError("전공을 선택해 주세요.")
+    if (!text.trim()) return setError("성적 내용을 붙여넣어 주세요.")
 
     const ids = filterCourses(parseCourses(text))
+
     if (ids.length === 0) {
       setError("과목을 찾을 수 없습니다. 전체성적조회 화면을 복사했는지 확인해 주세요.")
       return
     }
 
     setError("")
+
     const takenSet = new Set(ids)
     const { REQ: majorReq, MAJOR_IDS: majorIds, CREDITS: creditMap, MSC: mscTrack } = MAJORS[major]
     const totalCredits = parseTotalCredits(text)
@@ -81,35 +110,49 @@ function InputPage({ onSubmit }) {
             ))}
           </div>
 
-          <p className="info-note">
-            * 수강한 강의 외의 개인정보는 절대 저장하거나 처리하지 않습니다
-          </p>
+          <p className="info-note">* 수강한 강의 외의 개인정보는 절대 저장하거나 처리하지 않습니다</p>
         </div>
 
         <div className="textbox-wrapper">
           <div className="textbox-label">
             <span>전체성적 붙여넣기</span>
-            <select
-              className="major-select"
-              value={major}
-              onChange={(e) => {
-                setMajor(e.target.value)
-                setError("")
-              }}
-            >
-              <option value="" disabled>전공</option>
-              <option value="CivilandEnvironmentalEngineering">건설환경공학과</option>
-              <option value="EEE">전자·전기공학부</option>
-              <option value="MaterialsScienceandEngineering">신소재공학전공</option>
-              <option value="Chemical Engineering">화학공학전공</option>
-              <option value="computerScience">컴퓨터공학과</option>
-              <option value="Industrial andDataEngineering">산업·데이터공학과</option>
-              <option value="MechanicalandSystemDesignEngineering">기계·시스템디자인공학과</option>
-              <option value="visualDesign">시각디자인학과</option>
-              <option value="business">경영학부</option>
-              <option value="FineArts">회화과</option>
-              <option value="architecture">건축학전공</option>
-            </select>
+
+            <div className="select-group">
+              <select
+                className="major-select"
+                value={college}
+                onChange={(e) => {
+                  setCollege(e.target.value)
+                  setMajor("")
+                  setError("")
+                }}
+              >
+                <option value="" disabled>단과대</option>
+                {Object.keys(COLLEGES).map((collegeName) => (
+                  <option key={collegeName} value={collegeName}>
+                    {collegeName}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                className="major-select"
+                value={major}
+                disabled={!college}
+                onChange={(e) => {
+                  setMajor(e.target.value)
+                  setError("")
+                }}
+              >
+                <option value="" disabled>전공</option>
+                {college &&
+                  COLLEGES[college].map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+              </select>
+            </div>
           </div>
 
           <textarea
@@ -132,9 +175,6 @@ function InputPage({ onSubmit }) {
   )
 }
 
-/* ────────────────────────────────────────────
-   결과 페이지
-──────────────────────────────────────────── */
 function ResultPage({ results, totalCredits, majorCredits, onBack }) {
   const allMet = results.every((r) => r.met)
 
@@ -147,20 +187,14 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
 
       <main className="main result-layout">
         <aside className="side-ad left-ad">
-          <KakaoAd
-            unit="DAN-bDF9Z3hSDq4ysUwF"
-            width="160"
-            height="600"
-          />
+          <KakaoAd unit="DAN-bDF9Z3hSDq4ysUwF" width="160" height="600" />
         </aside>
 
         <section className="result-content">
           <div className={`summary-banner ${allMet ? "all-met" : "partial"}`}>
             <div className="summary-icon">{allMet ? "🎓" : "📋"}</div>
-            <div>
-              <div className="summary-title">
-                {allMet ? "모든 필수 요건을 충족했습니다!" : "아직 충족하지 않은 요건이 있습니다"}
-              </div>
+            <div className="summary-title">
+              {allMet ? "모든 필수 요건을 충족했습니다!" : "아직 충족하지 않은 요건이 있습니다"}
             </div>
           </div>
 
@@ -175,7 +209,9 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
                 {totalCredits >= 132 ? "충족" : `${132 - totalCredits}학점 부족`}
               </span>
             </div>
+
             <div className="credit-divider" />
+
             <div className="credit-row">
               <span className="credit-label">전공 학점</span>
               <span className="credit-value">
@@ -206,9 +242,7 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
             }
 
             return order.map((r) => {
-              if (r.type === "each") {
-                return <EachCard key={r.category} category={r.category} items={eachGroups[r.category]} />
-              }
+              if (r.type === "each") return <EachCard key={r.category} category={r.category} items={eachGroups[r.category]} />
               if (r.type === "nOf") return <NOfCard key={r.category} result={r} />
               if (r.type === "creditSection") return <CreditSectionCard key={r.category} result={r} />
               if (r.type === "mscCombined") return <MSCCombinedCard key={r.category} result={r} />
@@ -218,11 +252,7 @@ function ResultPage({ results, totalCredits, majorCredits, onBack }) {
         </section>
 
         <aside className="side-ad right-ad">
-          <KakaoAd
-            unit="DAN-bDF9Z3hSDq4ysUwF"
-            width="160"
-            height="600"
-          />
+          <KakaoAd unit="DAN-bDF9Z3hSDq4ysUwF" width="160" height="600" />
         </aside>
       </main>
     </>
@@ -272,9 +302,7 @@ function CreditSectionCard({ result }) {
           <div className="credit-row">
             <span className="credit-label">{section.label}</span>
             <span className="credit-value">
-              <span className={`credit-num ${section.met ? "met" : "unmet"}`}>
-                {section.earned}
-              </span>
+              <span className={`credit-num ${section.met ? "met" : "unmet"}`}>{section.earned}</span>
               <span className="credit-denom"> / {section.required}</span>
             </span>
             <span className={`credit-badge ${section.met ? "met" : "unmet"}`}>
@@ -300,9 +328,7 @@ function MSCCombinedCard({ result }) {
           <div className="credit-row">
             <span className="credit-label">{section.label}</span>
             <span className="credit-value">
-              <span className={`credit-num ${section.met ? "met" : "unmet"}`}>
-                {section.earned}
-              </span>
+              <span className={`credit-num ${section.met ? "met" : "unmet"}`}>{section.earned}</span>
               <span className="credit-denom"> / {section.required}</span>
             </span>
             <span className={`credit-badge ${section.met ? "met" : "unmet"}`}>
@@ -352,16 +378,11 @@ function NOfCard({ result }) {
   )
 }
 
-/* ────────────────────────────────────────────
-   루트
-──────────────────────────────────────────── */
 export default function App() {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    const handlePopState = () => {
-      setData(null)
-    }
+    const handlePopState = () => setData(null)
 
     window.addEventListener("popstate", handlePopState)
     return () => window.removeEventListener("popstate", handlePopState)
@@ -391,11 +412,7 @@ export default function App() {
 
       {data && (
         <div className="bottom-ad">
-          <KakaoAd
-            unit="DAN-t7NIlBeZk6DYCUgC"
-            width="728"
-            height="90"
-          />
+          <KakaoAd unit="DAN-t7NIlBeZk6DYCUgC" width="728" height="90" />
         </div>
       )}
 

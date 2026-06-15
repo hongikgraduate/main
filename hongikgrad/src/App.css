@@ -479,3 +479,15 @@ textarea::placeholder {
   justify-content: center;
   margin: 40px 0 20px;
 }
+
+.textbox-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.select-group {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
